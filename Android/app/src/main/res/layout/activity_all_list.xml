@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/svebg"
+    tools:context=".AllListActivity">
+    <ImageView
+        android:id="@+id/sveLogo"
+        android:layout_width="215dp"
+        android:layout_height="126dp"
+        android:layout_marginTop="72dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/shadowverse_logo" />
+
+    <TextView
+        android:id="@+id/svedbtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SVE Database"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sveLogo" />
+
+    <TextView
+        android:id="@+id/listListTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/captainmeredith"
+        android:text="All List"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/svedbtitle"
+        app:layout_constraintStart_toStartOf="@+id/svedbtitle"
+        app:layout_constraintTop_toBottomOf="@+id/svedbtitle" />
+
+    <ListView
+        android:id="@+id/list_list_view"
+        android:layout_width="262dp"
+        android:layout_height="323dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="72dp"
+        android:background="@drawable/edit_text_bg"
+        app:layout_constraintEnd_toEndOf="@+id/listListTitle"
+        app:layout_constraintHorizontal_bias="0.367"
+        app:layout_constraintStart_toStartOf="@+id/listListTitle"
+        app:layout_constraintTop_toBottomOf="@+id/listListTitle" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
