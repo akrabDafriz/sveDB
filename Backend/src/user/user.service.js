@@ -55,7 +55,39 @@ async function loginUser(userDetails){
     return user;
 }
 
+async function editProfile(details){
+    const {userId, username, email} = details;
+
+    let queryText = `UPDATE a_user SET `
+    let queryParams = [];
+
+    if(username){
+        queryText += 'username = $' + (queryParams.length + 1);
+        queryParams.push(username);
+    }
+    if(email){
+        queryText += ',email = $' + (queryParams.length + 1);
+        queryParams.push(email);
+    }
+
+    queryText+= ` WHERE id = $`+ (queryParams.length + 1);
+    queryParams.push(userId)
+    console.log(queryText);
+    console.log(queryParams);
+    await pool.query(
+        queryText,
+        queryParams
+    )
+    const result = await pool.query(
+        `SELECT * FROM a_user WHERE id = $1`,
+        [userId]
+    )
+    console.log(result.rows[0]);
+    return result.rows[0];
+}
+
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    editProfile
 };

@@ -63,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (!response.isSuccessful()) {
                     System.out.println(response);
                     System.out.println("GAGAL WOY");
-                    Toast.makeText(mContext, "Zie Application error " + response.code(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Zie Application error " + response.code()+" "+ response.message(), Toast.LENGTH_SHORT).show();
                     return;
                 }
                 BaseResponse<User> res = response.body();

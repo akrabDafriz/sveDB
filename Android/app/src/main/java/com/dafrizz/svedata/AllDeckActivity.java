@@ -15,6 +15,7 @@ import com.dafrizz.svedata.model.BaseResponse;
 import com.dafrizz.svedata.model.DeckList;
 import com.dafrizz.svedata.request.BaseAPIService;
 import com.dafrizz.svedata.request.UtilsAPI;
+import com.dafrizz.svedata.model.DeckCards;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ public class AllDeckActivity extends AppCompatActivity {
     private ListView listView;
     private ArrayAdapter<String> adapter;
     private List<String> deckNames;
+    public static List<DeckList> decks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,7 @@ public class AllDeckActivity extends AppCompatActivity {
 
         handleList();
     }
+
     protected void handleList() {
         listView = findViewById(R.id.deckListView);
         deckNames = new ArrayList<>();
@@ -55,16 +58,13 @@ public class AllDeckActivity extends AppCompatActivity {
             public void onResponse(Call<BaseResponse<List<DeckList>>> call, Response<BaseResponse<List<DeckList>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     BaseResponse<List<DeckList>> res = response.body();
-                    System.out.println("response is not null WOOOO");
-                    System.out.println(res);
-                    List<DeckList> decks = res.payload;
+                    decks = res.payload;
                     if (decks != null) {
                         for (DeckList deck : decks) {
                             deckNames.add(deck.deck_name);
                         }
                         adapter.notifyDataSetChanged();
                     }
-                    System.out.println(decks);
                 } else {
                     Toast.makeText(mContext, "Error fetching data", Toast.LENGTH_SHORT).show();
                 }
@@ -72,17 +72,23 @@ public class AllDeckActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<BaseResponse<List<DeckList>>> call, Throwable t) {
-                // Handle the failure
                 Toast.makeText(mContext, "Network error", Toast.LENGTH_SHORT).show();
             }
         });
+
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            if (decks != null && position < decks.size()) {
+                DeckList selectedDeck = decks.get(position);
+                Intent intent = new Intent(mContext, DeckDetailsActivity.class);
+                intent.putExtra("deck_id", selectedDeck.id); // Ensure this is an integer
+                startActivity(intent);
+            }
+        });
     }
+
     private void moveActivity(Context ctx, Class<?> cls){
         Intent intent = new Intent(ctx, cls);
         startActivity(intent);
     }
-
-    private void viewToast(Context ctx, String message){
-        Toast.makeText(ctx, message, Toast.LENGTH_SHORT).show();
-    }
 }
+

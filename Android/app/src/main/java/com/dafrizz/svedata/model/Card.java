@@ -10,7 +10,7 @@ public class Card {
     public int cost;
     public String stats;
     public String trait;
-    public sveRarity rarity;
+    public String rarity;
     public String effects;
 //    @Override
 //    public String toString() {

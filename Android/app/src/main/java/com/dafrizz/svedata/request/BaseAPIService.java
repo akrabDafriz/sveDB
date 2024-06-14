@@ -18,6 +18,7 @@ import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 public interface BaseAPIService {
@@ -50,7 +51,24 @@ public interface BaseAPIService {
     Call<BaseResponse<Integer>> createDeck(
             @Field("deckName") String deckName,
             @Field("userId") String userId,
-            @Field("cards") List<DeckRequest> deckRequest
+            @Field("cardNames") List<String> cardNames,
+            @Field("quantities") List<Integer> quantities
     );
-
+    @FormUrlEncoded
+    @POST("/list/create")
+    Call<BaseResponse<Integer>> createList(
+            @Field("listName") String listName,
+            @Field("userId") String userId,
+            @Field("cardNames") List<String> cardNames,
+            @Field("quantities") List<Integer> quantities
+    );
+    @FormUrlEncoded
+    @PUT("/user/update")
+    Call<BaseResponse<User>> updateUser(
+            @Field("userId") String userId,
+            @Field("username") String username,
+            @Field("email") String email
+    );
+    @GET("/decks/cardsById/{deckId}")
+    Call<BaseResponse<List<DeckCards>>> getDeckById(@Path("deckId") Integer deckId);
 }

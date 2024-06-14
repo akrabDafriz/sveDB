@@ -4,6 +4,63 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/svebg"
     tools:context=".CreateListActivity">
+    <EditText
+        android:id="@+id/listNameEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/text_bg"
+        android:hint="Enter List Name"
+        android:textColor="@color/black"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/filterCardsButton"
+        android:layout_width="285dp"
+        android:layout_height="41dp"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="#D27D2D"
+        android:text="Filter Cards"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/listNameEditText" />
+
+    <ListView
+        android:id="@+id/availableCardsListView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/text_bg"
+        app:layout_constraintTop_toBottomOf="@id/filterCardsButton"
+        app:layout_constraintBottom_toTopOf="@id/selectedCardsListView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.4" />
+
+    <ListView
+        android:id="@+id/selectedCardsListView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/text_bg"
+        app:layout_constraintTop_toBottomOf="@id/availableCardsListView"
+        app:layout_constraintBottom_toTopOf="@id/saveListButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.4" />
+
+    <Button
+        android:id="@+id/saveListButton"
+        android:layout_width="285dp"
+        android:layout_height="41dp"
+        android:text="Save List"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:backgroundTint="#800020"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,6 +3,7 @@ package com.dafrizz.svedata;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -37,7 +38,12 @@ public class AllListActivity extends AppCompatActivity {
         mContext = this;
         mApiService = UtilsAPI.getApiService();
 
+        Button createListButton = findViewById(R.id.create_list_button);
+
         handleList();
+
+        createListButton.setOnClickListener(v->moveActivity(mContext, CreateListActivity.class));
+        //NavigationUtils.setupBottomNavigation(this, R.id.navigation_all_lists);
     }
     protected void handleList() {
         listView = findViewById(R.id.list_list_view);
@@ -71,5 +77,12 @@ public class AllListActivity extends AppCompatActivity {
                 Toast.makeText(mContext, "Network error", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    private void moveActivity(Context ctx, Class<?> cls){
+        Intent intent = new Intent(ctx, cls);
+        startActivity(intent);
+    }
+    private void viewToast(Context ctx, String message){
+        Toast.makeText(ctx, message, Toast.LENGTH_SHORT).show();
     }
 }

@@ -1,7 +1,9 @@
 const pool = require('../db');
 
 async function createList(listDetails){
-    const { listName, userId, cards } = listDetails;
+    const { listName, userId, cardNames, quantities} = listDetails; //req.body is passed here as listDetails
+    console.log("Request Body: ");
+    console.log(listDetails);
 
     const listResult = await pool.query(
         'INSERT INTO list_list (user_id, list_name) VALUES ($1, $2) RETURNING id',
@@ -9,10 +11,11 @@ async function createList(listDetails){
     );
     const listId = listResult.rows[0].id;
 
-    for (const card of cards) {
+    let counter = 0;
+    for (const cardName of cardNames) {
         const cardResult = await pool.query(
             'SELECT id FROM card_database WHERE card_name = $1',
-            [card.name]
+            [cardName]
         );
 
         if (cardResult.rows.length === 0) {
@@ -20,11 +23,12 @@ async function createList(listDetails){
         }
 
         const cardId = cardResult.rows[0].id;
-
+        
         await pool.query(
             'INSERT INTO list_cards (list_id, card_id, amount) VALUES ($1, $2, $3)',
-            [listId, cardId, card.quantity]
+            [listId, cardId, quantities[counter]]
         );
+        counter++;
     }
 
     return listId;

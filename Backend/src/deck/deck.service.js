@@ -1,7 +1,9 @@
 const pool = require('../db');
 
 async function createDeck(deckDetails){
-    const { deckName, userId, cards } = deckDetails; //req.body is passed here as deckDetails
+    const { deckName, userId, cardNames, quantities} = deckDetails; //req.body is passed here as deckDetails
+    console.log("Request Body: ");
+    console.log(deckDetails);
 
     //check if total < 40
     // const totalCards = cards.reduce((sum, card) => sum + card.quantity, 0);
@@ -24,10 +26,11 @@ async function createDeck(deckDetails){
     );
     const deckId = deckResult.rows[0].id;
 
-    for (const card of cards) {
+    let counter = 0;
+    for (const cardName of cardNames) {
         const cardResult = await pool.query(
             'SELECT id FROM card_database WHERE card_name = $1',
-            [card.name]
+            [cardName]
         );
 
         if (cardResult.rows.length === 0) {
@@ -38,8 +41,9 @@ async function createDeck(deckDetails){
         
         await pool.query(
             'INSERT INTO deck_cards (deck_id, card_id, amount) VALUES ($1, $2, $3)',
-            [deckId, cardId, card.quantity]
+            [deckId, cardId, quantities[counter]]
         );
+        counter++;
     }
 
     return deckId;
@@ -90,7 +94,7 @@ async function getDeckById(deckId){
     JOIN card_database cd ON dc.card_id = cd.id 
     WHERE dl.id = $1;`
     const result = await pool.query(queryText, [deckId]);
-    console.log(result.rows);
+    //console.log(result.rows);
     if (result.rows.length === 0) {
         const deck = {
             deckId: -1,
@@ -171,10 +175,38 @@ async function updateDeckCards(deckDetails){
     return deckId;
 }
 
+async function deleteDeck(userId, deckId){
+    //const {userId, deckId} = body;
+
+    isUserValid = await pool.query(
+        `SELECT * FROM deck_list WHERE user_id = $1 AND id = $2`,
+        [userId, deckId]
+    );
+
+    if(isUserValid.rows.length === 0){
+        return {
+            message: "user is not deck owner",
+            succcess:false
+        }
+    }
+    else {
+        await pool.query(
+            `DELETE FROM deck_cards WHERE deck_id = $1`,
+            [deckId]
+        );
+        result = await pool.query(
+            `DELETE FROM deck_list WHERE user_id = $1 AND id = $2`,
+            [userId, deckId]
+        );
+        return result.rows;
+    }
+}
+
 module.exports = {
     createDeck,
     getAllDecks,
     getDeckByName,
     getDeckById,
-    updateDeckCards
+    updateDeckCards,
+    deleteDeck
 };

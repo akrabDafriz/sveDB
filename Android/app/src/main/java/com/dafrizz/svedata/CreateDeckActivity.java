@@ -1,25 +1,23 @@
 package com.dafrizz.svedata;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
+import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dafrizz.svedata.model.BaseResponse;
 import com.dafrizz.svedata.model.Card;
-import com.dafrizz.svedata.model.DeckRequest;
 import com.dafrizz.svedata.request.BaseAPIService;
 import com.dafrizz.svedata.request.UtilsAPI;
 
@@ -35,12 +33,15 @@ import retrofit2.Response;
 public class CreateDeckActivity extends AppCompatActivity {
     private BaseAPIService mApiService;
     private Context mContext;
+    private ListView availableCardsListView;
+    private ListView selectedCardsListView;
     private CardAdapter availableCardAdapter;
     private SelectedCardAdapter selectedCardAdapter;
     private List<Card> availableCards;
     private List<Card> selectedCards;
     private Map<String, Integer> cardQuantities;
-
+    private List<String> cardNames;
+    private List<Integer> quantities;
     private static final int FILTER_REQUEST_CODE = 1;
 
     @Override
@@ -51,16 +52,18 @@ public class CreateDeckActivity extends AppCompatActivity {
         mContext = this;
         mApiService = UtilsAPI.getApiService();
 
-        EditText deckNameEditText = findViewById(R.id.deckNameEditText);
+        EditText deckNameEditText = findViewById(R.id.listNameEditText);
         Button filterCardsButton = findViewById(R.id.filterCardsButton);
-        Button saveDeckButton = findViewById(R.id.saveDeckButton);
+        Button saveDeckButton = findViewById(R.id.saveListButton);
 
         cardQuantities = new HashMap<>();
         availableCards = new ArrayList<>();
         selectedCards = new ArrayList<>();
+        cardNames = new ArrayList<>();
+        quantities = new ArrayList<>();
 
-        ListView availableCardsListView = findViewById(R.id.availableCardsListView);
-        ListView selectedCardsListView = findViewById(R.id.selectedCardsListView);
+        availableCardsListView = findViewById(R.id.availableCardsListView);
+        selectedCardsListView = findViewById(R.id.selectedCardsListView);
 
         availableCardAdapter = new CardAdapter(this, availableCards);
         selectedCardAdapter = new SelectedCardAdapter(this, selectedCards, cardQuantities);
@@ -68,39 +71,27 @@ public class CreateDeckActivity extends AppCompatActivity {
         availableCardsListView.setAdapter(availableCardAdapter);
         selectedCardsListView.setAdapter(selectedCardAdapter);
 
-        availableCardsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Card card = availableCards.get(position);
-                System.out.println("Onitem dipencet");
-                Log.d("CreateDeckActivity", "Available card clicked: " + card.card_name);
-                addCardToDeck(card);
-            }
-        });
-
-        selectedCardsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Card card = selectedCards.get(position);
-                Log.d("CreateDeckActivity", "Selected card clicked: " + card.card_name);
-                removeCardFromDeck(card);
-            }
-        });
-
         filterCardsButton.setOnClickListener(v -> startActivityForResult(new Intent(mContext, FilterCardsActivity.class), FILTER_REQUEST_CODE));
 
         saveDeckButton.setOnClickListener(v -> {
             String deckName = deckNameEditText.getText().toString();
-            String userId = LoginActivity.loggedUser.id; // Replace with actual user ID
 
-            List<DeckRequest> deckRequests = new ArrayList<>();
-            for (Card card : selectedCards) {
-                String cardName = card.card_name;
-                int quantity = cardQuantities.get(cardName);
-                deckRequests.add(new DeckRequest(cardName, quantity));
+            if (deckName.isEmpty()) {
+                viewToast(mContext, "Deck name cannot be empty");
+                return;
             }
 
-            saveDeck(deckName, userId, deckRequests);
+            String userId = LoginActivity.loggedUser.id;
+
+            for (Card card : selectedCards) {
+                System.out.println("Zie Card Name is " + card.card_name);
+                String cardName = card.card_name;
+                cardNames.add(cardName);
+                int quantity = cardQuantities.get(cardName);
+                quantities.add(quantity);
+            }
+
+            saveDeck(deckName, userId);
         });
 
         fetchAllCards();
@@ -146,7 +137,6 @@ public class CreateDeckActivity extends AppCompatActivity {
                     viewToast(mContext, "Error fetching data");
                 }
             }
-
             @Override
             public void onFailure(Call<BaseResponse<List<Card>>> call, Throwable t) {
                 viewToast(mContext, "Network error");
@@ -158,12 +148,14 @@ public class CreateDeckActivity extends AppCompatActivity {
         String cardName = card.card_name;
         int quantity = cardQuantities.getOrDefault(cardName, 0);
         cardQuantities.put(cardName, quantity + 1);
-
+        if(cardQuantities.get(cardName) > 3){
+            viewToast(mContext, "No more than 3 cards in the deck");
+            cardQuantities.put(cardName, 3);
+        }
+        //System.out.println("cardName: "+cardName+" and quantity: "+quantity);
         if (!selectedCards.contains(card)) {
             selectedCards.add(card);
         }
-
-        Log.d("CreateDeckActivity", "Card added: " + card.card_name + " - Quantity: " + cardQuantities.get(cardName));
         selectedCardAdapter.notifyDataSetChanged();
     }
 
@@ -178,13 +170,12 @@ public class CreateDeckActivity extends AppCompatActivity {
             selectedCards.remove(card);
         }
 
-        Log.d("CreateDeckActivity", "Card removed: " + card.card_name + " - Remaining Quantity: " + cardQuantities.getOrDefault(cardName, 0));
         selectedCardAdapter.notifyDataSetChanged();
     }
 
-    private void saveDeck(String deckName, String userId, List<DeckRequest> deckRequests) {
-        Call<BaseResponse<Integer>> call = mApiService.createDeck(deckName, userId, deckRequests);
-        call.enqueue(new Callback<BaseResponse<Integer>>() {
+    private void saveDeck(String deckName, String userId) {
+        //Call<BaseResponse<Integer>> call =
+        mApiService.createDeck(deckName, userId, cardNames, quantities).enqueue(new Callback<BaseResponse<Integer>>() {
             @Override
             public void onResponse(Call<BaseResponse<Integer>> call, Response<BaseResponse<Integer>> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -213,13 +204,130 @@ public class CreateDeckActivity extends AppCompatActivity {
         }
     }
 
-    private void moveActivity(Context ctx, Class<?> cls){
-        Intent intent = new Intent(ctx, cls);
-        startActivity(intent);
-    }
-
     private void viewToast(Context ctx, String message){
         Toast.makeText(ctx, message, Toast.LENGTH_SHORT).show();
     }
-}
 
+    private class CardAdapter extends BaseAdapter {
+        private Context context;
+        private List<Card> cardList;
+
+        public CardAdapter(Context context, List<Card> cardList) {
+            this.context = context;
+            this.cardList = cardList;
+        }
+
+        @Override
+        public int getCount() {
+            return cardList.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return cardList.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = LayoutInflater.from(context).inflate(R.layout.item_card, parent, false);
+            }
+
+            Card card = cardList.get(position);
+
+            TextView nameTextView = convertView.findViewById(R.id.nameTextView);
+            TextView classTextView = convertView.findViewById(R.id.classTextView);
+            TextView typeTextView = convertView.findViewById(R.id.typeTextView);
+            TextView costTextView = convertView.findViewById(R.id.costTextView);
+            TextView statsTextView = convertView.findViewById(R.id.statsTextView);
+            Button actionButton = convertView.findViewById(R.id.actionButton);
+
+            nameTextView.setText(card.card_name);
+            classTextView.setText(String.valueOf(card.sveclass));
+            typeTextView.setText(String.valueOf(card.type));
+            costTextView.setText(String.valueOf(card.cost));
+            statsTextView.setText(card.stats);
+
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    addCardToDeck(card);
+                }
+            });
+
+            return convertView;
+        }
+    }
+
+    // Adapter for selected cards
+    private class SelectedCardAdapter extends BaseAdapter {
+        private Context context;
+        private List<Card> cardList;
+        private Map<String, Integer> cardQuantities;
+
+        public SelectedCardAdapter(Context context, List<Card> cardList, Map<String, Integer> cardQuantities) {
+            this.context = context;
+            this.cardList = cardList;
+            this.cardQuantities = cardQuantities;
+        }
+
+        @Override
+        public int getCount() {
+            return cardList.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return cardList.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = LayoutInflater.from(context).inflate(R.layout.item_card, parent, false);
+            }
+
+            Card card = cardList.get(position);
+
+            TextView nameTextView = convertView.findViewById(R.id.nameTextView);
+            TextView classTextView = convertView.findViewById(R.id.classTextView);
+            TextView typeTextView = convertView.findViewById(R.id.typeTextView);
+            TextView costTextView = convertView.findViewById(R.id.costTextView);
+            TextView statsTextView = convertView.findViewById(R.id.statsTextView);
+            Button actionButton = convertView.findViewById(R.id.actionButton);
+
+            nameTextView.setText(card.card_name);
+            classTextView.setText(card.sveclass);
+            typeTextView.setText(card.type);
+            costTextView.setText(String.valueOf(card.cost));
+            statsTextView.setText(card.stats);
+
+            actionButton.setText("Remove");
+            actionButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    removeCardFromDeck(card);
+                }
+            });
+
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    removeCardFromDeck(card);
+                }
+            });
+
+            return convertView;
+        }
+    }
+}

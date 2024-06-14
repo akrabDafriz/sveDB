@@ -3,8 +3,11 @@ const listService = require('./list.service.js');
 async function createList(req, res){
     try{
         listId = await listService.createList(req.body);
-        res.status(201).json({ message: 'List created successfully', listId });
-
+        res.status(201).json({ 
+            success: true,
+            message: 'List created successfully', 
+            payload: listId }
+        );
     }catch(error){
         console.log(error);
         res.status(500).json({error});

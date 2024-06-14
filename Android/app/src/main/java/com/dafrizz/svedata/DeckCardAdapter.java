@@ -9,32 +9,28 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.dafrizz.svedata.model.Card;
+import com.dafrizz.svedata.model.DeckCards;
 
 import java.util.List;
 
-public class CardAdapter extends BaseAdapter {
+public class DeckCardAdapter extends BaseAdapter {
     private Context context;
-    private List<Card> cardList;
+    private List<DeckCards> deckCardList;
 
-    public CardAdapter(Context context, List<Card> cardList) {
+    public DeckCardAdapter(Context context, List<DeckCards> deckCardList) {
         this.context = context;
-        this.cardList = cardList;
+        this.deckCardList = deckCardList;
     }
 
     @Override
     public int getCount() {
-        return cardList.size();
+        return deckCardList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return cardList.get(position);
+        return deckCardList.get(position);
     }
 
     @Override
@@ -48,7 +44,7 @@ public class CardAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(context).inflate(R.layout.item_card, parent, false);
         }
 
-        Card card = cardList.get(position);
+        DeckCards card = deckCardList.get(position);
 
         TextView nameTextView = convertView.findViewById(R.id.nameTextView);
         TextView classTextView = convertView.findViewById(R.id.classTextView);
@@ -63,27 +59,15 @@ public class CardAdapter extends BaseAdapter {
         costTextView.setText(String.valueOf(card.cost));
         statsTextView.setText(card.stats);
 
-        convertView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, CardDetailsActivity.class);
-                intent.putExtra("card_id", card.id);
-                context.startActivity(intent);
-            }
+        convertView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, CardDetailsActivity.class);
+            intent.putExtra("card_id", card.card_id);
+            context.startActivity(intent);
         });
 
-        actionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("CardAdapter", "Action button clicked for " + card.card_name);
-                // Handle action button click if needed
-            }
-        });
+        actionButton.setOnClickListener(v -> Log.d("DeckCardAdapter", "Action button clicked for " + card.card_name));
 
         return convertView;
     }
 }
-
-
-
 

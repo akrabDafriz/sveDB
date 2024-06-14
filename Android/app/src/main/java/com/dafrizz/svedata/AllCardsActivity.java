@@ -33,7 +33,7 @@ public class AllCardsActivity extends AppCompatActivity {
     private Context mContext;
     private ListView listView;
     private CardAdapter adapter;
-    private List<Card> cardList;
+    public static List<Card> cardList;
 
     private static final int FILTER_REQUEST_CODE = 1;
 
@@ -48,6 +48,7 @@ public class AllCardsActivity extends AppCompatActivity {
 
         handleList();
         filterButton.setOnClickListener(v -> startActivityForResult(new Intent(mContext, FilterCardsActivity.class), FILTER_REQUEST_CODE));
+//        NavigationUtils.setupBottomNavigation(this, R.id.navigation_all_cards);
     }
 
     private void handleList() {

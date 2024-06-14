@@ -7,7 +7,7 @@
     tools:context=".CreateDeckActivity">
 
     <EditText
-        android:id="@+id/deckNameEditText"
+        android:id="@+id/listNameEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -29,7 +29,7 @@
         android:text="Filter Cards"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/deckNameEditText" />
+        app:layout_constraintTop_toBottomOf="@id/listNameEditText" />
 
     <ListView
         android:id="@+id/availableCardsListView"
@@ -48,13 +48,13 @@
         android:layout_height="0dp"
         android:background="@drawable/text_bg"
         app:layout_constraintTop_toBottomOf="@id/availableCardsListView"
-        app:layout_constraintBottom_toTopOf="@id/saveDeckButton"
+        app:layout_constraintBottom_toTopOf="@id/saveListButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.4" />
 
     <Button
-        android:id="@+id/saveDeckButton"
+        android:id="@+id/saveListButton"
         android:layout_width="285dp"
         android:layout_height="41dp"
         android:text="Save Deck"

@@ -45,8 +45,23 @@ const loginUser = async (req, res) => {
     }
 };
 
+const editProfile = async(req, res) => {
+    try{
+        result = await userService.editProfile(req.body);
+        res.status(200).json({
+            success: true,
+            message: "Profile updated",
+            payload: result
+        });
+    }catch(error){
+        console.log(error);
+        res.status(500).json(error);
+    }
+}
+
 module.exports = {
     registerUser,
     loginUser,
+    editProfile
 };
 
