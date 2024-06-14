@@ -7,35 +7,14 @@
     android:background="@drawable/svebg"
     tools:context=".AllDeckActivity">
 
-    <ImageView
-        android:id="@+id/sveLogo"
-        android:layout_width="215dp"
-        android:layout_height="126dp"
-        android:layout_marginTop="72dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/shadowverse_logo" />
-
-    <TextView
-        android:id="@+id/svedbtitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SVE Database"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sveLogo" />
-
     <ListView
         android:id="@+id/deckListView"
         android:layout_width="223dp"
         android:layout_height="381dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="28dp"
         android:background="@drawable/edit_text_bg"
         app:layout_constraintEnd_toEndOf="@+id/deckListTitle"
-        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintHorizontal_bias="0.519"
         app:layout_constraintStart_toStartOf="@+id/deckListTitle"
         app:layout_constraintTop_toBottomOf="@+id/deckListTitle" />
 
@@ -43,14 +22,27 @@
         android:id="@+id/deckListTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="All Decks"
-        android:textStyle="bold"
-        android:textSize="24sp"
-        android:textColor="@color/black"
+        android:layout_marginTop="72dp"
         android:fontFamily="@font/captainmeredith"
-        app:layout_constraintEnd_toEndOf="@+id/svedbtitle"
-        app:layout_constraintStart_toStartOf="@+id/svedbtitle"
-        app:layout_constraintTop_toBottomOf="@+id/svedbtitle" />
+        android:text="All Decks"
+        android:background="@drawable/edit_text_bg"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.507"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/create_deck_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Create A Deck"
+        android:backgroundTint="#800020"
+        app:layout_constraintEnd_toEndOf="@+id/deckListView"
+        app:layout_constraintStart_toStartOf="@+id/deckListView"
+        app:layout_constraintTop_toBottomOf="@+id/deckListView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

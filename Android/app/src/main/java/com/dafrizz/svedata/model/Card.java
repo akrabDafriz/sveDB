@@ -12,4 +12,11 @@ public class Card {
     public String trait;
     public sveRarity rarity;
     public String effects;
+//    @Override
+//    public String toString() {
+//        return "{" +
+//                "card_name='" + card_name + '\'' +
+//                // include other fields...
+//                '}';
+//    }
 }

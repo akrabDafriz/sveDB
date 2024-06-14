@@ -1,29 +1,27 @@
 package com.dafrizz.svedata;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.dafrizz.svedata.model.Card;
 
 import java.util.List;
+import java.util.Map;
 
-public class CardAdapter extends BaseAdapter {
+public class SelectedCardAdapter extends BaseAdapter {
     private Context context;
     private List<Card> cardList;
+    private Map<String, Integer> cardQuantities;
 
-    public CardAdapter(Context context, List<Card> cardList) {
+    public SelectedCardAdapter(Context context, List<Card> cardList, Map<String, Integer> cardQuantities) {
         this.context = context;
         this.cardList = cardList;
+        this.cardQuantities = cardQuantities;
     }
 
     @Override
@@ -62,16 +60,17 @@ public class CardAdapter extends BaseAdapter {
         costTextView.setText(String.valueOf(card.cost));
         statsTextView.setText(card.stats);
 
+        actionButton.setText("Remove");
         actionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("CardAdapter", "Action button clicked for " + card.card_name);
-                // Moveactivity
+                ((CreateDeckActivity) context).removeCardFromDeck(card);
             }
         });
 
         return convertView;
     }
 }
+
 
 

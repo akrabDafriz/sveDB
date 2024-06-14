@@ -4,6 +4,7 @@ import com.dafrizz.svedata.model.BaseResponse;
 import com.dafrizz.svedata.model.Card;
 import com.dafrizz.svedata.model.DeckCards;
 import com.dafrizz.svedata.model.DeckList;
+import com.dafrizz.svedata.model.DeckRequest;
 import com.dafrizz.svedata.model.ListList;
 import com.dafrizz.svedata.model.User;
 
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
@@ -42,6 +44,13 @@ public interface BaseAPIService {
     @POST("/cards/filtered")
     Call<BaseResponse<List<Card>>> getCardsFiltered(
             @FieldMap Map<String, String> filters
+    );
+    @FormUrlEncoded
+    @POST("/decks/create")
+    Call<BaseResponse<Integer>> createDeck(
+            @Field("deckName") String deckName,
+            @Field("userId") String userId,
+            @Field("cards") List<DeckRequest> deckRequest
     );
 
 }

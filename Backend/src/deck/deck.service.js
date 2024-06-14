@@ -1,7 +1,7 @@
 const pool = require('../db');
 
 async function createDeck(deckDetails){
-    const { deckName, userId, cards } = deckDetails;
+    const { deckName, userId, cards } = deckDetails; //req.body is passed here as deckDetails
 
     //check if total < 40
     // const totalCards = cards.reduce((sum, card) => sum + card.quantity, 0);
@@ -51,6 +51,12 @@ async function getAllDecks(){
     return decks.rows;
 }
 
+async function getAllDecks(){
+    const decks = await pool.query('SELECT * FROM deck_list');
+    console.log(decks.rows);
+    return decks.rows;
+}
+
 async function getDeckByName(deckName){
     const queryText = `SELECT dc.deck_id, cd.*, dc.amount
     FROM deck_list dl 
@@ -78,13 +84,13 @@ async function getDeckByName(deckName){
 }
 
 async function getDeckById(deckId){
-    const queryText = `SELECT dc.deck_id, dl.deck_name, cd.*, dc.amount
+    const queryText = `SELECT dl.deck_name, cd.*, dc.amount
     FROM deck_list dl 
     JOIN deck_cards dc ON dl.id = dc.deck_id 
     JOIN card_database cd ON dc.card_id = cd.id 
     WHERE dl.id = $1;`
     const result = await pool.query(queryText, [deckId]);
-
+    console.log(result.rows);
     if (result.rows.length === 0) {
         const deck = {
             deckId: -1,

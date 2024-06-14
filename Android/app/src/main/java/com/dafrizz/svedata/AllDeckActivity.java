@@ -3,6 +3,7 @@ package com.dafrizz.svedata;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -25,7 +26,7 @@ import retrofit2.Response;
 public class AllDeckActivity extends AppCompatActivity {
     private BaseAPIService mApiService;
     private Context mContext;
-    private Button backButton;
+    private Button createDeckButton;
     private ListView listView;
     private ArrayAdapter<String> adapter;
     private List<String> deckNames;
@@ -37,6 +38,9 @@ public class AllDeckActivity extends AppCompatActivity {
 
         mContext = this;
         mApiService = UtilsAPI.getApiService();
+        createDeckButton = findViewById(R.id.create_deck_button);
+
+        createDeckButton.setOnClickListener(v->moveActivity(mContext, CreateDeckActivity.class));
 
         handleList();
     }
@@ -72,5 +76,13 @@ public class AllDeckActivity extends AppCompatActivity {
                 Toast.makeText(mContext, "Network error", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    private void moveActivity(Context ctx, Class<?> cls){
+        Intent intent = new Intent(ctx, cls);
+        startActivity(intent);
+    }
+
+    private void viewToast(Context ctx, String message){
+        Toast.makeText(ctx, message, Toast.LENGTH_SHORT).show();
     }
 }

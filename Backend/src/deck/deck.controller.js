@@ -5,8 +5,9 @@ async function createDeck(req, res){
         const deckId = await deckService.createDeck(req.body);
         const deck = await deckService.getDeckById(deckId);
         res.status(200).json({
-             message: 'Deck created successfully', 
-             deck: deck});
+            success: true,
+            message: 'Deck created successfully', 
+            payload: deckId});
     }catch(error){
         console.log(error);
         res.status(500).json({error});

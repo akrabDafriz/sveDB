@@ -84,3 +84,5 @@ ALTER TABLE deck_cards ADD FOREIGN KEY (deck_id) REFERENCES "deck_list" (id);
 ALTER TABLE deck_cards ADD FOREIGN KEY (card_id) REFERENCES "card_database" (id);
 ALTER TABLE list_cards ADD FOREIGN KEY (list_id) REFERENCES "list_list" (id);
 ALTER TABLE list_cards ADD FOREIGN KEY (card_id) REFERENCES "card_database" (id);
+ALTER TABLE deck_list ADD FOREIGN KEY (user_id) REFERENCES "a_user" (id);
+ALTER TABLE list_list ADD FOREIGN KEY (user_id) REFERENCES "a_user" (id);
